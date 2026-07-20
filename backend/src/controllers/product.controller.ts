@@ -24,29 +24,6 @@ interface ProductDoc {
   rating: { rate: number; count: number };
 }
 
-const FALLBACK_PRODUCTS: FakeStoreProduct[] = [
-  { id: 1, title: 'Fjallraven Foldsack Backpack', price: 109.95, description: 'Your perfect pack for everyday use and walks in the forest.', category: "men's clothing", image: 'https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg', rating: { rate: 3.9, count: 120 } },
-  { id: 2, title: 'Mens Casual Premium Slim Fit T-Shirts', price: 22.3, description: 'Slim-fitting style, contrast raglan long sleeve henley placket.', category: "men's clothing", image: 'https://fakestoreapi.com/img/71-3HjGNDUL._AC_SY879._SX._UX._SY._UY_.jpg', rating: { rate: 4.1, count: 259 } },
-  { id: 3, title: 'Mens Cotton Jacket', price: 55.99, description: 'Great outerwear jackets for Spring/Autumn/Winter.', category: "men's clothing", image: 'https://fakestoreapi.com/img/71li-ujtlUL._AC_UX679_.jpg', rating: { rate: 4.7, count: 500 } },
-  { id: 4, title: 'Mens Casual Slim Fit', price: 15.99, description: 'The color could be slightly different between on the screen and in practice.', category: "men's clothing", image: 'https://fakestoreapi.com/img/71YXzeOuslL._AC_UY879_.jpg', rating: { rate: 2.1, count: 430 } },
-  { id: 5, title: 'John Hardy Women\'s Legends Naga Bracelet', price: 695, description: 'From our Legends Collection, the Naga was inspired by the mythical water dragon.', category: 'jewelery', image: 'https://fakestoreapi.com/img/71pWzhdJNwL._AC_UL640_QL65_ML3_.jpg', rating: { rate: 4.6, count: 400 } },
-  { id: 6, title: 'Solid Gold Petite Micropave', price: 168, description: 'Satisfaction Guaranteed. Return or exchange any order within 30 days.', category: 'jewelery', image: 'https://fakestoreapi.com/img/61sbMiUnoGL._AC_UL640_QL65_ML3_.jpg', rating: { rate: 3.9, count: 70 } },
-  { id: 7, title: 'White Gold Plated Princess Ring', price: 9.99, description: 'Classic Created Wedding Engagement Solitaire Diamond Promise Ring.', category: 'jewelery', image: 'https://fakestoreapi.com/img/71YAIFU48IL._AC_UL640_QL65_ML3_.jpg', rating: { rate: 3.0, count: 400 } },
-  { id: 8, title: 'Pierced Owl Rose Gold Plated Earrings', price: 10.99, description: 'Rose Gold Plated Double Flared Tunnel Plug Earrings.', category: 'jewelery', image: 'https://fakestoreapi.com/img/51UDEzMJVpL._AC_UL640_QL65_ML3_.jpg', rating: { rate: 1.9, count: 100 } },
-  { id: 9, title: 'WD 2TB Elements External Hard Drive', price: 64, description: 'USB 3.0 and USB 2.0 Compatibility Fast data transfers.', category: 'electronics', image: 'https://fakestoreapi.com/img/61IBBVJvSDL._AC_SY879_.jpg', rating: { rate: 3.3, count: 203 } },
-  { id: 10, title: 'SanDisk SSD PLUS 1TB Internal SSD', price: 109, description: 'Easy upgrade for faster boot up, shutdown, application load.', category: 'electronics', image: 'https://fakestoreapi.com/img/61U7T1koQqL._AC_SX679_.jpg', rating: { rate: 2.9, count: 470 } },
-  { id: 11, title: 'Silicon Power 256GB SSD 3D NAND', price: 109, description: '3D NAND flash for high transfer speeds.', category: 'electronics', image: 'https://fakestoreapi.com/img/71kWymZ+c+L._AC_SX679_.jpg', rating: { rate: 4.8, count: 319 } },
-  { id: 12, title: 'WD 4TB Gaming Drive for PS4', price: 114, description: 'Expand your PS4 gaming experience.', category: 'electronics', image: 'https://fakestoreapi.com/img/61mtL65D4cL._AC_SX679_.jpg', rating: { rate: 4.8, count: 400 } },
-  { id: 13, title: 'Acer SB220Q bi 21.5" Full HD IPS Monitor', price: 599, description: '21.5 inches Full HD widescreen IPS display.', category: 'electronics', image: 'https://fakestoreapi.com/img/81QpkIctqPL._AC_SX679_.jpg', rating: { rate: 2.9, count: 250 } },
-  { id: 14, title: 'Samsung 49-Inch CHG90 Curved Monitor', price: 999.99, description: '49 INCH SUPER ULTRAWIDE 32:9 CURVED GAMING MONITOR.', category: 'electronics', image: 'https://fakestoreapi.com/img/81Zt42ioCgL._AC_SX679_.jpg', rating: { rate: 2.2, count: 140 } },
-  { id: 15, title: 'BIYLACLESEN Women\'s Snowboard Jacket', price: 56.99, description: '3-in-1 Snowboard Jacket Winter Coats.', category: "women's clothing", image: 'https://fakestoreapi.com/img/51Y5NI-I5jL._AC_UX679_.jpg', rating: { rate: 2.6, count: 235 } },
-  { id: 16, title: 'Lock and Love Women\'s Moto Jacket', price: 29.95, description: 'Removable Hooded Faux Leather Moto Biker Jacket.', category: "women's clothing", image: 'https://fakestoreapi.com/img/81XH0e8fefL._AC_UY879_.jpg', rating: { rate: 2.9, count: 340 } },
-  { id: 17, title: 'Rain Jacket Women Windbreaker', price: 39.99, description: 'Lightweight perfet for trip or casual wear.', category: "women's clothing", image: 'https://fakestoreapi.com/img/71HblAHs5xL._AC_UY879_-2.jpg', rating: { rate: 3.8, count: 679 } },
-  { id: 18, title: 'MBJ Women\'s Solid Short Sleeve Boat Neck V', price: 9.85, description: '95% Rayon 5% Spandex, Made in USA.', category: "women's clothing", image: 'https://fakestoreapi.com/img/71z3kpMAYsL._AC_UY879_.jpg', rating: { rate: 4.7, count: 130 } },
-  { id: 19, title: 'Opna Women\'s Short Sleeve Moisture Shirt', price: 7.95, description: '100% Polyester, Machine wash.', category: "women's clothing", image: 'https://fakestoreapi.com/img/51eg55uWmdL._AC_UX679_.jpg', rating: { rate: 4.5, count: 146 } },
-  { id: 20, title: 'DANVOUY Women\'s Casual Cotton T Shirt', price: 12.99, description: '95%Cotton,5%Spandex, Features: Casual.', category: "women's clothing", image: 'https://fakestoreapi.com/img/61pHAEJ4NML._AC_UX679_.jpg', rating: { rate: 3.6, count: 145 } },
-];
-
 let cachedProducts: (FakeStoreProduct & { _id: string })[] | null = null;
 let lastFetch = 0;
 const CACHE_TTL = 5 * 60 * 1000;
@@ -55,14 +32,18 @@ async function fetchFromFakeStore(): Promise<(FakeStoreProduct & { _id: string }
   const now = Date.now();
   if (cachedProducts && now - lastFetch < CACHE_TTL) return cachedProducts;
   try {
-    const res = await fetch(FAKESTORE_API);
+    const res = await fetch(FAKESTORE_API, {
+      headers: { 'User-Agent': 'InvestProp-AI/1.0' },
+      signal: AbortSignal.timeout(10000),
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json() as FakeStoreProduct[];
     cachedProducts = data.map(p => ({ ...p, _id: String(p.id) }));
     lastFetch = now;
     return cachedProducts;
   } catch {
     if (cachedProducts) return cachedProducts;
-    cachedProducts = FALLBACK_PRODUCTS.map(p => ({ ...p, _id: String(p.id) }));
+    cachedProducts = [];
     lastFetch = now;
     return cachedProducts;
   }
