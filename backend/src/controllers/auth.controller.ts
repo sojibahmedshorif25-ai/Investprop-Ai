@@ -33,6 +33,7 @@ export const register = async (req: Request, res: Response, next: NextFunction):
       data: { user, ...tokens },
     });
   } catch (error) {
+    console.error('Register error:', error instanceof Error ? error.message : error, error instanceof Error ? error.stack : '');
     next(error);
   }
 };
@@ -62,6 +63,7 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
       data: { user, ...tokens },
     });
   } catch (error) {
+    console.error('Login error:', error instanceof Error ? error.message : error);
     next(error);
   }
 };
