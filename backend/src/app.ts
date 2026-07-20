@@ -69,16 +69,10 @@ app.get('/api/ping', (req, res) => {
   res.json({ success: true, message: 'pong' });
 });
 
+let echoCounter = 0;
 app.all('/api/echo', (req, res) => {
-  try {
-    const ct = req.headers['content-type'];
-    const bodyType = typeof req.body;
-    let bodyStr = 'null';
-    try { bodyStr = JSON.stringify(req.body); } catch { bodyStr = 'stringify-error'; }
-    res.json({ success: true, method: req.method, bodyType, bodyStr, contentType: ct });
-  } catch (e: unknown) {
-    res.status(500).json({ success: false, error: (e as Error).message });
-  }
+  echoCounter++;
+  res.json({ success: true, echo: echoCounter, method: req.method, ping: '/api/ping works' });
 });
 
 app.get('/api/testlogin', async (req, res) => {
