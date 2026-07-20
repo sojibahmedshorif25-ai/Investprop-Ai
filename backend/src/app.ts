@@ -39,7 +39,6 @@ app.all('/api/echo', (req, res) => {
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
-app.use(express.urlencoded({ extended: true }));
 
 app.use(passport.initialize());
 
