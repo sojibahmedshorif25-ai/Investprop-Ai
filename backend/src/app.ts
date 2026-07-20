@@ -9,9 +9,6 @@ import { config } from './config';
 import { connectDatabase } from './config/database';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 import passport from './config/passport';
-import mongoose from 'mongoose';
-import bcrypt from 'bcryptjs';
-import { User } from './models/User';
 import authRoutes from './routes/auth.routes';
 import propertyRoutes from './routes/property.routes';
 import aiRoutes from './routes/ai.routes';
@@ -30,16 +27,8 @@ const io = new Server(httpServer, {
 app.use(helmet());
 app.use(cors({ origin: config.frontendUrl, credentials: true }));
 app.use(morgan('dev'));
-
 app.use(express.json({ limit: '10mb' }));
-
-let echoCounter = 0;
-app.all('/api/echo', (req, res) => {
-  echoCounter++;
-  res.json({ success: true, echo: echoCounter });
-});
 app.use(express.urlencoded({ extended: true }));
-
 app.use(passport.initialize());
 
 const limiter = rateLimit({
@@ -56,34 +45,6 @@ app.use('/api/products', productRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ success: true, message: 'API is running', timestamp: new Date().toISOString() });
-});
-
-app.get('/api/debug', async (req, res) => {
-  try {
-    const state = mongoose.connection.readyState;
-    const dbInfo = { connected: state === 1, state: ['disconnected', 'connected', 'connecting', 'disconnecting'][state] || 'unknown' };
-    let userCount = 0;
-    let userInfo = 'none';
-    try {
-      userCount = await User.countDocuments({});
-      const demo = await User.findOne({ email: 'demo@investor.com' }).select('+password');
-      userInfo = demo ? `found (id: ${demo._id}, hasPw: ${!!demo.password})` : 'not found';
-    } catch (e: unknown) { userInfo = `error: ${(e as Error).message}`; }
-    res.json({ success: true, db: dbInfo, userCount, userInfo, env: { node: process.version, nodeEnv: process.env.NODE_ENV } });
-  } catch (e: unknown) { res.json({ success: false, error: (e as Error).message }); }
-});
-
-app.get('/api/ping', (req, res) => {
-  res.json({ success: true, message: 'pong' });
-});
-
-app.get('/api/testlogin', async (req, res) => {
-  try {
-    const user = await User.findOne({ email: 'demo@investor.com' }).select('+password');
-    res.json({ success: true, found: !!user, hasPassword: !!(user && user.password) });
-  } catch (e: unknown) {
-    res.json({ success: false, error: (e as Error).message, stack: (e as Error).stack });
-  }
 });
 
 app.use(notFoundHandler);

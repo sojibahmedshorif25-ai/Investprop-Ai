@@ -17,7 +17,7 @@ export const errorHandler = (
     return;
   }
 
-  console.error('Unhandled error:', err instanceof Error ? err.message : err, err instanceof Error ? err.stack : '');
+  console.error('Unhandled error:', err);
 
   res.status(500).json({
     success: false,

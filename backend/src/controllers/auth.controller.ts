@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
 import { User } from '../models/User';
 import { config } from '../config';
 import { ApiError } from '../utils/apiError';
@@ -37,7 +36,6 @@ export const register = async (req: Request, res: Response, next: NextFunction):
       data: { user: userObj, ...tokens },
     });
   } catch (error) {
-    console.error('Register error:', error instanceof Error ? error.message : error, error instanceof Error ? error.stack : '');
     next(error);
   }
 };
@@ -51,7 +49,7 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
       throw ApiError.unauthorized('Invalid email or password');
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await user.comparePassword(password);
     if (!isMatch) {
       throw ApiError.unauthorized('Invalid email or password');
     }
@@ -69,7 +67,6 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
       data: { user: userObj, ...tokens },
     });
   } catch (error) {
-    console.error('Login error:', error instanceof Error ? error.message : error, error instanceof Error ? error.stack : '');
     next(error);
   }
 };
