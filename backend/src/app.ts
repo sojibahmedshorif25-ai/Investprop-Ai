@@ -1,0 +1,79 @@
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import morgan from 'morgan';
+import rateLimit from 'express-rate-limit';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
+import { config } from './config';
+import { connectDatabase } from './config/database';
+import { errorHandler, notFoundHandler } from './middleware/errorHandler';
+import passport from './config/passport';
+import authRoutes from './routes/auth.routes';
+import propertyRoutes from './routes/property.routes';
+import aiRoutes from './routes/ai.routes';
+import productRoutes from './routes/product.routes';
+
+const app = express();
+const httpServer = createServer(app);
+
+const io = new Server(httpServer, {
+  cors: {
+    origin: config.frontendUrl,
+    methods: ['GET', 'POST'],
+  },
+});
+
+app.use(helmet());
+app.use(cors({ origin: config.frontendUrl, credentials: true }));
+app.use(morgan('dev'));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true }));
+app.use(passport.initialize());
+
+const limiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 100,
+  message: { success: false, message: 'Too many requests, please try again later' },
+});
+app.use('/api', limiter);
+
+app.use('/api/auth', authRoutes);
+app.use('/api/properties', propertyRoutes);
+app.use('/api/ai', aiRoutes);
+app.use('/api/products', productRoutes);
+
+app.get('/api/health', (req, res) => {
+  res.json({ success: true, message: 'API is running', timestamp: new Date().toISOString() });
+});
+
+app.use(notFoundHandler);
+app.use(errorHandler);
+
+io.on('connection', (socket) => {
+  console.log('Client connected:', socket.id);
+
+  socket.on('join', (userId: string) => {
+    socket.join(`user:${userId}`);
+  });
+
+  socket.on('notification', (data) => {
+    io.to(`user:${data.userId}`).emit('notification', data);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('Client disconnected:', socket.id);
+  });
+});
+
+const startServer = async () => {
+  await connectDatabase();
+
+  httpServer.listen(config.port, () => {
+    console.log(`Server running on port ${config.port} in ${config.nodeEnv} mode`);
+  });
+};
+
+startServer().catch(console.error);
+
+export { app, httpServer, io };
