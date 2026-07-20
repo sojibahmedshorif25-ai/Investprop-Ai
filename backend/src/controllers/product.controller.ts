@@ -26,15 +26,14 @@ interface ProductDoc {
 
 let cachedProducts: (FakeStoreProduct & { _id: string })[] | null = null;
 let lastFetch = 0;
-const CACHE_TTL = 5 * 60 * 1000;
+const CACHE_TTL = 10 * 60 * 1000;
 
 async function fetchFromFakeStore(): Promise<(FakeStoreProduct & { _id: string })[]> {
   const now = Date.now();
   if (cachedProducts && now - lastFetch < CACHE_TTL) return cachedProducts;
   try {
     const res = await fetch(FAKESTORE_API, {
-      headers: { 'User-Agent': 'InvestProp-AI/1.0' },
-      signal: AbortSignal.timeout(10000),
+      headers: { 'User-Agent': 'InvestProp-AI/1.0', 'Accept': 'application/json' },
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json() as FakeStoreProduct[];
@@ -42,10 +41,7 @@ async function fetchFromFakeStore(): Promise<(FakeStoreProduct & { _id: string }
     lastFetch = now;
     return cachedProducts;
   } catch {
-    if (cachedProducts) return cachedProducts;
-    cachedProducts = [];
-    lastFetch = now;
-    return cachedProducts;
+    return cachedProducts || [];
   }
 }
 
