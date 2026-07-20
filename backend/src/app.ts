@@ -10,6 +10,7 @@ import { connectDatabase } from './config/database';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 import passport from './config/passport';
 import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
 import { User } from './models/User';
 import authRoutes from './routes/auth.routes';
 import propertyRoutes from './routes/property.routes';
@@ -62,6 +63,23 @@ app.get('/api/debug', async (req, res) => {
     } catch (e: unknown) { userInfo = `error: ${(e as Error).message}`; }
     res.json({ success: true, db: dbInfo, userCount, userInfo, env: { node: process.version, nodeEnv: process.env.NODE_ENV } });
   } catch (e: unknown) { res.json({ success: false, error: (e as Error).message }); }
+});
+
+app.post('/api/testlogin', express.json(), async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email }).select('+password');
+    if (!user || !user.password) {
+      res.json({ success: false, message: 'User not found' }); return;
+    }
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      res.json({ success: false, message: 'Password mismatch' }); return;
+    }
+    res.json({ success: true, message: 'Login works', userId: user._id.toString() });
+  } catch (e: unknown) {
+    res.json({ success: false, error: (e as Error).message, stack: (e as Error).stack });
+  }
 });
 
 app.use(notFoundHandler);
