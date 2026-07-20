@@ -65,18 +65,18 @@ app.get('/api/debug', async (req, res) => {
   } catch (e: unknown) { res.json({ success: false, error: (e as Error).message }); }
 });
 
-app.post('/api/testlogin', express.json(), async (req, res) => {
+app.get('/api/ping', (req, res) => {
+  res.json({ success: true, message: 'pong' });
+});
+
+app.all('/api/echo', (req, res) => {
+  res.json({ success: true, method: req.method, body: req.body, headers: req.headers['content-type'] });
+});
+
+app.get('/api/testlogin', async (req, res) => {
   try {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email }).select('+password');
-    if (!user || !user.password) {
-      res.json({ success: false, message: 'User not found' }); return;
-    }
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      res.json({ success: false, message: 'Password mismatch' }); return;
-    }
-    res.json({ success: true, message: 'Login works', userId: user._id.toString() });
+    const user = await User.findOne({ email: 'demo@investor.com' }).select('+password');
+    res.json({ success: true, found: !!user, hasPassword: !!(user && user.password) });
   } catch (e: unknown) {
     res.json({ success: false, error: (e as Error).message, stack: (e as Error).stack });
   }
