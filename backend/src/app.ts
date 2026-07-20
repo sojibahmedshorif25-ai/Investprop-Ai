@@ -32,6 +32,13 @@ app.use(cors({ origin: config.frontendUrl, credentials: true }));
 app.use(morgan('dev'));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
+
+let echoCounter = 0;
+app.all('/api/echo', (req, res) => {
+  echoCounter++;
+  res.json({ success: true, echo: echoCounter });
+});
+
 app.use(passport.initialize());
 
 const limiter = rateLimit({
@@ -40,12 +47,6 @@ const limiter = rateLimit({
   message: { success: false, message: 'Too many requests, please try again later' },
 });
 app.use('/api', limiter);
-
-let echoCounter = 0;
-app.all('/api/echo', (req, res) => {
-  echoCounter++;
-  res.json({ success: true, echo: echoCounter });
-});
 
 app.use('/api/auth', authRoutes);
 app.use('/api/properties', propertyRoutes);
