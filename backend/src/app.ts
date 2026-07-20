@@ -9,6 +9,8 @@ import { config } from './config';
 import { connectDatabase } from './config/database';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 import passport from './config/passport';
+import mongoose from 'mongoose';
+import { User } from './models/User';
 import authRoutes from './routes/auth.routes';
 import propertyRoutes from './routes/property.routes';
 import aiRoutes from './routes/ai.routes';
@@ -45,6 +47,21 @@ app.use('/api/products', productRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ success: true, message: 'API is running', timestamp: new Date().toISOString() });
+});
+
+app.get('/api/debug', async (req, res) => {
+  try {
+    const state = mongoose.connection.readyState;
+    const dbInfo = { connected: state === 1, state: ['disconnected', 'connected', 'connecting', 'disconnecting'][state] || 'unknown' };
+    let userCount = 0;
+    let userInfo = 'none';
+    try {
+      userCount = await User.countDocuments({});
+      const demo = await User.findOne({ email: 'demo@investor.com' }).select('+password');
+      userInfo = demo ? `found (id: ${demo._id}, hasPw: ${!!demo.password})` : 'not found';
+    } catch (e: unknown) { userInfo = `error: ${(e as Error).message}`; }
+    res.json({ success: true, db: dbInfo, userCount, userInfo, env: { node: process.version, nodeEnv: process.env.NODE_ENV } });
+  } catch (e: unknown) { res.json({ success: false, error: (e as Error).message }); }
 });
 
 app.use(notFoundHandler);
