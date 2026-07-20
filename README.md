@@ -2,6 +2,15 @@
 
 A production-ready, full-stack SaaS application that leverages AI to provide property investors with intelligent market analysis, personalized recommendations, risk assessment, and investment guidance.
 
+## 🌐 Live Demo
+
+- **Frontend:** [https://investprop-ai.vercel.app](https://investprop-ai.vercel.app)
+- **Backend API:** [https://investprop-ai.onrender.com](https://investprop-ai.onrender.com/api/health)
+
+### Demo Credentials
+- **Email:** `demo@investor.com`
+- **Password:** `Demo@12345`
+
 ## Tech Stack
 
 ### Frontend
@@ -13,13 +22,13 @@ A production-ready, full-stack SaaS application that leverages AI to provide pro
 - **Form Validation:** React Hook Form + Zod
 
 ### Backend
-- **Runtime:** Node.js 18+
+- **Runtime:** Node.js 20+
 - **Framework:** Express.js with TypeScript
-- **Database:** MongoDB with Mongoose ODM
+- **Database:** MongoDB (Atlas / In-Memory fallback)
 - **Authentication:** JWT + Google OAuth 2.0
 - **AI/LLM:** Claude API (Anthropic) - Claude 3.5 Sonnet
 - **Rate Limiting:** express-rate-limit
-- **Logging:** Pino
+- **Deployment:** Render (Backend) + Vercel (Frontend)
 
 ## Features
 
