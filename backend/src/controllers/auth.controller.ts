@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
 import { User } from '../models/User';
 import { config } from '../config';
 import { ApiError } from '../utils/apiError';
@@ -27,10 +28,13 @@ export const register = async (req: Request, res: Response, next: NextFunction):
     const user = await User.create({ name, email, password, investmentGoals });
     const tokens = generateTokens(user._id.toString());
 
+    const userObj = user.toObject();
+    delete userObj.password;
+
     res.status(201).json({
       success: true,
       message: 'Account created successfully',
-      data: { user, ...tokens },
+      data: { user: userObj, ...tokens },
     });
   } catch (error) {
     console.error('Register error:', error instanceof Error ? error.message : error, error instanceof Error ? error.stack : '');
@@ -47,23 +51,25 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
       throw ApiError.unauthorized('Invalid email or password');
     }
 
-    const isMatch = await user.comparePassword(password);
+    const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       throw ApiError.unauthorized('Invalid email or password');
     }
 
-    user.lastLogin = new Date();
-    await user.save();
+    await User.findByIdAndUpdate(user._id, { lastLogin: new Date() });
 
     const tokens = generateTokens(user._id.toString());
+
+    const userObj = user.toObject();
+    delete userObj.password;
 
     res.json({
       success: true,
       message: 'Signed in successfully',
-      data: { user, ...tokens },
+      data: { user: userObj, ...tokens },
     });
   } catch (error) {
-    console.error('Login error:', error instanceof Error ? error.message : error);
+    console.error('Login error:', error instanceof Error ? error.message : error, error instanceof Error ? error.stack : '');
     next(error);
   }
 };
