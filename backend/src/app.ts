@@ -70,7 +70,15 @@ app.get('/api/ping', (req, res) => {
 });
 
 app.all('/api/echo', (req, res) => {
-  res.json({ success: true, method: req.method, body: req.body, headers: req.headers['content-type'] });
+  try {
+    const ct = req.headers['content-type'];
+    const bodyType = typeof req.body;
+    let bodyStr = 'null';
+    try { bodyStr = JSON.stringify(req.body); } catch { bodyStr = 'stringify-error'; }
+    res.json({ success: true, method: req.method, bodyType, bodyStr, contentType: ct });
+  } catch (e: unknown) {
+    res.status(500).json({ success: false, error: (e as Error).message });
+  }
 });
 
 app.get('/api/testlogin', async (req, res) => {
