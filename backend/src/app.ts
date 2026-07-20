@@ -28,14 +28,13 @@ const io = new Server(httpServer, {
 });
 
 app.use(helmet());
+app.use(cors({ origin: config.frontendUrl, credentials: true }));
 
 let echoCounter = 0;
 app.all('/api/echo', (req, res) => {
   echoCounter++;
   res.json({ success: true, echo: echoCounter });
 });
-
-app.use(cors({ origin: config.frontendUrl, credentials: true }));
 app.use(morgan('dev'));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
