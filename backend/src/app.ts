@@ -27,6 +27,12 @@ const io = new Server(httpServer, {
   },
 });
 
+let echoCounter = 0;
+app.all('/api/echo', (req, res) => {
+  echoCounter++;
+  res.json({ success: true, echo: echoCounter });
+});
+
 app.use(helmet());
 app.use(cors({ origin: config.frontendUrl, credentials: true }));
 app.use(morgan('dev'));
@@ -67,12 +73,6 @@ app.get('/api/debug', async (req, res) => {
 
 app.get('/api/ping', (req, res) => {
   res.json({ success: true, message: 'pong' });
-});
-
-let echoCounter = 0;
-app.all('/api/echo', (req, res) => {
-  echoCounter++;
-  res.json({ success: true, echo: echoCounter, method: req.method, ping: '/api/ping works' });
 });
 
 app.get('/api/testlogin', async (req, res) => {
